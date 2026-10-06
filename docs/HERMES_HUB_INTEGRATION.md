@@ -89,8 +89,10 @@ Hermes voice_bridge 的 `/api/llm/chat`,复用同一套 Ark-Plan → fallback �
 - [x] 文档骨架
 - [x] 双进程同启脚本
 - [x] LLM 桥接示例
-- [ ] A58 屏幕共享端口(ADB 与 USB CDC 同时跑的真机验证)
+- [x] A58 屏幕共享端口(ADB 与 USB CDC 同时跑的真机验证)  ← 2026-09-17 V3.2 阶段实证
+- [x] **舵机三通道真机闭环(V3.7.1,2026-10-06)** — 见 [HERMES_HUB_V37_SERVO_MILESTONE.md](./HERMES_HUB_V37_SERVO_MILESTONE.md)
 - [ ] Hermes HUB Skill 注册为 Open-AutoGLM "action"(让 VLM 知道有机器人身体可用)
+- [ ] 上游 main 同步检查(2026-10-06 核实:上游无新提交,fork main 已同步)
 - [ ] PR 提议:`hermes-hub-integration` 系列 commits 上游 → 主仓
 
 ---

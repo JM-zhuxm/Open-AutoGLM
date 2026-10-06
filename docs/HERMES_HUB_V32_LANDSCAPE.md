@@ -1,5 +1,9 @@
 # Hermes HUB × Open-AutoGLM V3.2 链路实证 (2026-09-17)
 
+> **⚠️ 后续版本**: 身体层已推进到 **V3.7.1 舵机三通道真机闭环**(2026-10-06),
+> 见 [HERMES_HUB_V37_SERVO_MILESTONE.md](./HERMES_HUB_V37_SERVO_MILESTONE.md)。
+> 本文档保留为 V3.2 基线实证记录(USB CDC 链路 + 流式对话),内容仍然有效。
+
 > **补遗**: 本文档是 [HERMES_HUB_INTEGRATION.md](./HERMES_HUB_INTEGRATION.md) 的
 > V3.2 版本号 — 用真实烧录 + 真机测试数据替换 9/16 写的骨架描述。
 > **核心**: Open-AutoGLM 的 ADB 控屏 UI 与 Hermes HUB 的 USB CDC 控身体
