@@ -182,7 +182,33 @@ git push jm hermes-hub-integration
 
 ---
 
-## 4. 🔴 提交前必做检查清单
+## 4. 🔴 推送后必做：查漏
+
+**每次 push 完立刻跑**，别等下次才发现漏推：
+
+```bash
+bash ~/.hermes/skills/github/phonebot-github-push/scripts/verify_push.sh all
+# 只查一个仓库: verify_push.sh phonebot   或   verify_push.sh oagl
+```
+
+它检查两件事最容易漏的：
+
+| 检查项 | 抓的坑 |
+|---|---|
+| **当前分支是否领先 `origin/main`** | 在 `dev-*` 分支提交、却只推 `main` → 漏 1 个 commit |
+| tag 本地/远端数量 | 打了 tag 忘 `push --tags` |
+| 里程碑 commit 是否在远端 | 以为推了其实没有 |
+| Open-AutoGLM 是否在 `main` 上工作 | 会与上游冲突，失去 fork 同步能力 |
+
+退出码 `0` =干净，`1` = 有欠账（脚本会打印修复命令）。
+
+> **2026-10-07 的真实教训**：在 `dev-20261007` 分支提交 SOP，却执行了 `git push origin main`。
+> 当时两个分支指向同一点，看起来推送成功，实际那个 commit 差一推没上远端 ——
+> 是手工逐条核对才发现的。这个脚本就是为此写的。
+
+---
+
+## 5. 提交前检查清单
 
 - [ ] **扫密钥**（当前 diff + 全部历史，见 §2 步骤 2）
 - [ ] `.env` / `auth.json` 未被 `git add`
@@ -193,21 +219,22 @@ git push jm hermes-hub-integration
 
 ---
 
-## 5. 常见故障速查
+## 6. 常见故障速查
 
-| 现象 | 原因 | 解决 |
+| 现象 | 原因 | 怎么查/怎么修 |
 |---|---|---|
 | `could not read Username for 'https://github.com'` | 远端配成了 **HTTPS** | 改成 SSH：`git remote set-url <name> git@github.com:...` |
 | `Permission denied (publickey)` | 公钥没授权 / agent 没加载 | 见 §1.2 + §1.4 |
 | `The requested URL returned error: 403` | 仓库不存在或是私有无权限 | 确认仓库名、确认 key 已授权到该账号 |
 | `remote: Repository not found` | 仓库名拼错 / 权限不足 | `ssh -T git@github.com` 确认身份；核对仓库名 |
 | `! [rejected] main -> main (non-fast-forward)` | 远端有新提交 | `git pull --rebase origin main` 后再推 |
+| push 显示成功但远端没变化 | 推错分支（本地在 dev、推的是 main） | 跑 §4 查漏脚本 |
 | push 后发现漏了文件 | `git add` 不全 | 补一个 commit，不要 `force push`（除非确认无误） |
 | `Key is already in use` | 该公钥已加过 | 无需处理，直接下一步 |
 
 ---
 
-## 6. 绝不做的事
+## 7. 绝不做的事
 
 | ❌ 禁止 | 原因 |
 |---|---|
@@ -217,19 +244,23 @@ git push jm hermes-hub-integration
 | **`force push`** 到已有 tag 的分支 | 破坏他人已拉取的引用 |
 | 无脑 `git add -A` | 容易把 `.env`、临时文件、测试产物带进去 |
 | 在 `Open-AutoGLM` 的 `main` 分支工作 | 会与上游冲突，失去 fork 的同步能力 |
+| **push 后不查漏** | 漏推几周才发现（10-07 踩过） |
 
 ---
 
-## 7. 相关文件
+## 8. 相关文件
 
 | 文件 | 用途 |
 |---|---|
+| `docs/GITHUB_PUSH_SOP.md`（本文档，phonebot-r1 与 Open-AutoGLM 各一份） | 推送流程 |
+| `~/.hermes/skills/github/phonebot-github-push/SKILL.md` | 助手侧 skill，含查漏脚本 |
+| `~/.hermes/skills/github/phonebot-github-push/scripts/verify_push.sh` | 查漏脚本（两仓库通用） |
 | `.gitignore`（phonebot-r1） | 已忽略 `models/` `venv/` `*.onnx` `*.bak.*` `output/` `audio/*.wav` |
 | `docs/hermes-hub-plan/README.md`（Open-AutoGLM） | 开发计划文档包索引 + 两仓库分工 |
 | `docs/MANUAL_huina620_CONVERSION.md`（phonebot-r1） | 汇纳620 改造手册 |
 
 ---
 
-## 8. 一句话总结
+## 9. 一句话总结
 
-**认证靠 SSH 公钥（3 把私钥都在本机，从不外传）；两个仓库分别用 `origin`（phonebot-r1）和 `jm`（Open-AutoGLM）推送；推之前先扫密钥。**
+**认证靠 SSH 公钥（3 把私钥都在本机，从不外传）；两个仓库分别用 `origin`（phonebot-r1）和 `jm`（Open-AutoGLM）推送；推之前扫密钥，推之后跑查漏脚本。**
